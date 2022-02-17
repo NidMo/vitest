@@ -35,6 +35,7 @@ export function getFullName(task: Task) {
   return getNames(task).join(c.dim(' > '))
 }
 
+/** 确认依赖是否有安装 */
 export async function ensurePackageInstalled(
   dependency: string,
   promptInstall = !process.env.CI && process.stdout.isTTY,

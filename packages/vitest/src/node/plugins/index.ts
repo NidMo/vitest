@@ -8,6 +8,7 @@ import { GlobalSetupPlugin } from './globalSetup'
 import { MocksPlugin } from './mock'
 import { EnvReplacerPlugin } from './envReplacer'
 
+/** 生成vitest的ui插件，加入到vite中 */
 export async function VitestPlugin(options: UserConfig = {}, ctx = new Vitest()): Promise<VitePlugin[]> {
   let haveStarted = false
 

@@ -73,6 +73,7 @@ async function run(cliFilters: string[], options: CliOptions) {
   await start(cliFilters, options)
 }
 
+// 入口函数
 async function start(cliFilters: string[], options: CliOptions) {
   process.env.TEST = 'true'
   process.env.VITEST = 'true'
@@ -87,6 +88,7 @@ async function start(cliFilters: string[], options: CliOptions) {
   if (typeof options.coverage === 'boolean')
     options.coverage = { enabled: options.coverage }
 
+  // 创建 vitest 上下文
   const ctx = await createVitest(options)
 
   if (ctx.config.coverage.enabled) {
