@@ -47,6 +47,7 @@ export class Vitest {
     this.console = globalThis.console
   }
 
+  // 设置vite开发服务
   async setServer(options: UserConfig, server: ViteDevServer) {
     this.unregisterWatcher?.()
     clearTimeout(this._rerunTimer)
@@ -58,7 +59,9 @@ export class Vitest {
 
     this.server = server
     this.config = resolved
+    // 新建一个状态管理实例
     this.state = new StateManager()
+    // 新建一个快照管理实例
     this.snapshot = new SnapshotManager(resolved)
     this.reporters = resolved.reporters
       .map((i) => {
