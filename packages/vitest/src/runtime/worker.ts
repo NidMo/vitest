@@ -36,7 +36,6 @@ async function startViteNode(ctx: WorkerContext) {
   }
 
   const { config } = ctx
-  debugger
 
   // 通过vite执行runtime目录下的entry.ts，返回run函数
   const { run, collect } = (await executeInViteNode({
@@ -56,8 +55,6 @@ async function startViteNode(ctx: WorkerContext) {
     root: config.root,
     base: config.base,
   }))[0]
-  
-  console.log('collect:', collect)
 
   _viteNode = { run, collect }
 
