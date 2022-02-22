@@ -11,10 +11,16 @@ export interface ExecuteOptions extends ViteNodeRunnerOptions {
   resolveId: ResolveIdFunction
 }
 
+/**
+ * 在 viteNode 中执行文件
+ * @param options
+ * @returns 返回结果
+ */
 export async function executeInViteNode(options: ExecuteOptions) {
+  /** 创建一个 vitest runner */
   const runner = new VitestRunner(options)
 
-  // provide the vite define variable in this context
+  // provide the vite define variable in this context （引入vite环境）
   await runner.executeId('/@vite/env')
 
   const result: any[] = []

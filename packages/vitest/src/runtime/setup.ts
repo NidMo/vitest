@@ -7,6 +7,12 @@ import { toArray } from '../utils'
 import { rpc } from './rpc'
 
 let globalSetup = false
+
+/**
+ * 根据配置设置全局环境
+ * @param config
+ * @returns
+ */
 export async function setupGlobalEnv(config: ResolvedConfig) {
   // should be redeclared for each test
   // if run with "threads: false"
@@ -18,6 +24,7 @@ export async function setupGlobalEnv(config: ResolvedConfig) {
   globalSetup = true
 
   setupConsoleLogSpy()
+  // 设置 chai 断言库
   await setupChai()
 
   if (config.globals)
@@ -60,6 +67,12 @@ export function setupConsoleLogSpy() {
   })
 }
 
+/**
+ * 根据环境名，等待环境setup后执行回调函数
+ * @param name
+ * @param options
+ * @param fn
+ */
 export async function withEnv(
   name: ResolvedConfig['environment'],
   options: ResolvedConfig['environmentOptions'],

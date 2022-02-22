@@ -28,14 +28,30 @@ export class ViteNodeRunner {
     this.moduleCache = options.moduleCache || new Map()
   }
 
+  /**
+   * 根据文件路径执行
+   * @param file
+   * @returns
+   */
   async executeFile(file: string) {
     return await this.cachedRequest(`/@fs/${slash(resolve(file))}`, [])
   }
 
+  /**
+   * 根据文件Id执行文件
+   * @param id
+   * @returns
+   */
   async executeId(id: string) {
     return await this.cachedRequest(id, [])
   }
 
+  /**
+   * 缓存request
+   * @param rawId
+   * @param callstack
+   * @returns
+   */
   async cachedRequest(rawId: string, callstack: string[]) {
     const id = normalizeId(rawId, this.options.base)
 
@@ -49,6 +65,13 @@ export class ViteNodeRunner {
     return await promise
   }
 
+  /**
+   * 直接请求
+   * @param id
+   * @param fsPath
+   * @param callstack
+   * @returns
+   */
   async directRequest(id: string, fsPath: string, callstack: string[]) {
     callstack = [...callstack, id]
     const request = async(dep: string) => {
@@ -64,6 +87,7 @@ export class ViteNodeRunner {
     if (id in requestStubs)
       return requestStubs[id]
 
+    // fetch请求模块，返回通过vite开发服务处理过的code
     const { code: transformed, externalize } = await this.options.fetchModule(id)
     if (externalize) {
       const mod = await this.interopedImport(externalize)

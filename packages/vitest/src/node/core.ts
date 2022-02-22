@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import type { ViteDevServer } from 'vite'
+// 遍历文件系统和返回路径名
 import fg from 'fast-glob'
 import mm from 'micromatch'
 import c from 'picocolors'
@@ -77,6 +78,7 @@ export class Vitest {
     if (this.config.watch)
       this.registerWatcher()
 
+    // 创建一个node环境的 vite 服务
     this.vitenode = new ViteNodeServer(server, this.config)
 
     this.runningPromise = undefined
@@ -107,9 +109,11 @@ export class Vitest {
     return config as ResolvedConfig
   }
 
+  /** 启动vitest */
   async start(filters?: string[]) {
     await this.report('onInit', this)
 
+    // 获取test文件
     const files = await this.filterTestsBySource(
       await this.globTestFiles(filters),
     )
@@ -123,6 +127,7 @@ export class Vitest {
       process.exit(this.config.passWithNoTests ? 0 : 1)
     }
 
+    // 跑test文件
     await this.runFiles(files)
 
     if (this.config.coverage.enabled)
@@ -182,15 +187,18 @@ export class Vitest {
     return runningTests
   }
 
+  // 执行测试文件
   async runFiles(files: string[]) {
     await this.runningPromise
 
     this.runningPromise = (async() => {
       if (!this.pool)
+        // 创建线程池
         this.pool = createPool(this)
 
       const invalidates = Array.from(this.invalidates)
       this.invalidates.clear()
+      // 通过进程池多进=线程执行测试文件
       await this.pool.runTests(files, invalidates)
 
       if (hasFailed(this.state.getFiles()))
@@ -390,7 +398,9 @@ export class Vitest {
     )))
   }
 
+  /** 获取测试文件 */
   async globTestFiles(filters?: string[]) {
+    // 根据配置，返回匹配到的test文件
     let files = await fg(
       this.config.include,
       {

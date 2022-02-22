@@ -14,6 +14,12 @@ function hash(str: string, length = 10) {
     .slice(0, length)
 }
 
+/**
+ * 收集测试文件
+ * @param paths
+ * @param config
+ * @returns
+ */
 export async function collectTests(paths: string[], config: ResolvedConfig) {
   const files: File[] = []
 

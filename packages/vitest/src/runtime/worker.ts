@@ -13,6 +13,13 @@ let __vitest_worker__: WorkerGlobalState
 const moduleCache: Map<string, ModuleCache> = new Map()
 const mockMap = {}
 
+/**
+ * 启动node环境里的vite
+ * @description 返回run函数（来自entry.ts的run函数）
+ * @description 返回collect函数
+ * @param ctx
+ * @returns
+ */
 async function startViteNode(ctx: WorkerContext) {
   if (_viteNode)
     return _viteNode
@@ -29,9 +36,12 @@ async function startViteNode(ctx: WorkerContext) {
   }
 
   const { config } = ctx
+  debugger
 
+  // 通过vite执行runtime目录下的entry.ts，返回run函数
   const { run, collect } = (await executeInViteNode({
     files: [
+      // 引用 runtime目录的 entry.ts 文件
       resolve(distDir, 'entry.js'),
     ],
     fetchModule(id) {
@@ -46,12 +56,15 @@ async function startViteNode(ctx: WorkerContext) {
     root: config.root,
     base: config.base,
   }))[0]
+  
+  console.log('collect:', collect)
 
   _viteNode = { run, collect }
 
   return _viteNode
 }
 
+/** 初始化worker */
 function init(ctx: WorkerContext) {
   if (__vitest_worker__ && ctx.config.threads && ctx.config.isolate)
     throw new Error(`worker for ${ctx.files.join(',')} already initialized by ${__vitest_worker__.ctx.files.join(',')}. This is probably an internal bug of Vitest.`)

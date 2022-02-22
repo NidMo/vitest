@@ -120,6 +120,7 @@ async function start(cliFilters: string[], options: CliOptions) {
   })
 
   try {
+    // 过滤cli命令输入，启动vitest
     await ctx.start(cliFilters)
   }
   catch (e) {

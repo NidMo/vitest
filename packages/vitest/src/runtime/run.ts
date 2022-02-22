@@ -201,6 +201,7 @@ export async function runSuites(suites: Suite[]) {
     await runSuite(suite)
 }
 
+/** 开始测试 */
 export async function startTests(paths: string[], config: ResolvedConfig) {
   const files = await collectTests(paths, config)
 
@@ -208,6 +209,7 @@ export async function startTests(paths: string[], config: ResolvedConfig) {
 
   await runSuites(files)
 
+  // 生成覆盖率
   takeCoverage()
 
   await getSnapshotClient().saveSnap()

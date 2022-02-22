@@ -18,6 +18,7 @@ export interface WorkerPool {
   close: () => Promise<void>
 }
 
+/** 创建线程池 */
 export function createPool(ctx: Vitest): WorkerPool {
   if (ctx.config.threads)
     return createWorkerPool(ctx)
@@ -25,6 +26,7 @@ export function createPool(ctx: Vitest): WorkerPool {
     return createFakePool(ctx)
 }
 
+// runtime目录下的worker.ts
 const workerPath = pathToFileURL(resolve(distDir, './worker.js')).href
 
 export function createFakePool(ctx: Vitest): WorkerPool {
@@ -56,12 +58,23 @@ export function createFakePool(ctx: Vitest): WorkerPool {
   }
 }
 
+/**
+ * 创建 web worker 池
+ * @description 暴露三个方法出去
+ * @description runTests （执行测试文件）---- 执行worker.ts文件里的run方法
+ * @description collectTests （收集测试文件）---- 执行worker.ts文件里的collect方法
+ * @description close 关闭
+ * @param ctx
+ * @returns
+ */
 export function createWorkerPool(ctx: Vitest): WorkerPool {
+  // 线程数（至少一个线程）
   const threadsCount = ctx.config.watch
     ? Math.max(cpus().length / 2, 1)
     : Math.max(cpus().length - 1, 1)
 
   const options: TinypoolOptions = {
+    // 引入worker.ts来创建线程
     filename: workerPath,
     // Disable this for now for WebContainers
     // https://github.com/vitest-dev/vitest/issues/93
@@ -75,6 +88,7 @@ export function createWorkerPool(ctx: Vitest): WorkerPool {
     options.concurrentTasksPerWorker = 1
   }
 
+  /** 创建Tinypool，对线程进行通信管理  */
   const pool = new Tinypool(options)
 
   const runWithFiles = (name: string): RunWithFiles => {
